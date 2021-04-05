@@ -90,36 +90,23 @@ class Matrix {
         value[15] = 1;
     }
 
-    public function view(eye: Array<Float>, target: Array<Float>, down: Array<Float>) {
+    // view matrix, just a lookAt function
+    public function view(eye: Array<Float>, target: Array<Float>, up: Array<Float>) {
         inline function vectorNormalize(vector: Array<Float>): Array<Float> {
             var len = Math.sqrt(vector[0]*vector[0] + vector[1]*vector[1] + vector[2]*vector[2]);
             return [vector[0] / len, vector[1] / len, vector[2] / len];
         }
 
-        inline function vectorCrossProduct(vec1: Array<Float>, vec2: Array<Float>): Array<Float> {
-            var a1 = vec1[0];
-            var a2 = vec1[1];
-            var a3 = vec1[2];
-            var b1 = vec2[0];
-            var b2 = vec2[1];
-            var b3 = vec2[2];
-
-            return [a2*b3 - a3*b2, a3*b1 - a1*b3, a1*b2 - a2*b1];
+        inline function vectorCrossProduct(a: Array<Float>, b: Array<Float>): Array<Float> {
+            return [a[1]*b[2] - a[2]*b[1], a[2]*b[0] - a[0]*b[2], a[0]*b[1] - a[1]*b[0]];
         }
 
-        inline function vectorDotProduct(vec1: Array<Float>, vec2: Array<Float>): Float {
-            var a1 = vec1[0];
-            var a2 = vec1[1];
-            var a3 = vec1[2];
-            var b1 = vec2[0];
-            var b2 = vec2[1];
-            var b3 = vec2[2];
-
-            return a1*b1 + a2*b2 + a3*b3;
+        inline function vectorDotProduct(a: Array<Float>, b: Array<Float>): Float {
+            return a[0]*b[0] + a[1]*b[1] + a[2]*b[2];
         }
 
         var z = vectorNormalize([eye[0] - target[0], eye[1] - target[1], eye[2] - target[2]]);
-        var x = vectorNormalize(vectorCrossProduct(down, z));
+        var x = vectorNormalize(vectorCrossProduct(up, z));
         var y = vectorCrossProduct(z, x);
 
         value[0] = x[0];

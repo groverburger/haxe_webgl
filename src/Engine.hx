@@ -21,29 +21,8 @@ class Engine {
         * loading the shaders
         ***************************************************************************************/
 
-        var vsSource = "
-            attribute vec4 aVertexPosition;
-            attribute vec4 aVertexColor;
-
-            uniform mat4 uModelMatrix;
-            uniform mat4 uViewMatrix;
-            uniform mat4 uProjectionMatrix;
-
-            varying lowp vec4 vColor;
-
-            void main(void) {
-                gl_Position = uProjectionMatrix * uViewMatrix * uModelMatrix * aVertexPosition;
-                vColor = aVertexColor;
-            }
-        ";
-
-        var fsSource = "
-            varying lowp vec4 vColor;
-
-            void main(void) {
-                gl_FragColor = vColor;
-            }
-        ";
+        var vsSource = ShaderLoader.getShader("projection.vert");
+        var fsSource = ShaderLoader.getShader("projection.frag");
 
         var shaderProgram = initShaderProgram(vsSource, fsSource);
         var programInfo = {
