@@ -1,0 +1,3 @@
+#-D js-es=6
+--js js/main.js
+--main src.Engine

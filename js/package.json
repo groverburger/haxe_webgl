@@ -1,0 +1,11 @@
+{
+  "name": "game",
+  "main": "index.html",
+  "chromium-args": "--enable-logging=stderr",
+  "window": {
+      "position": "center",
+      //"resizable": false,
+      "width": 1024,
+      "height": 768
+  }
+}
