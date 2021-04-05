@@ -90,64 +90,56 @@ class Matrix {
         value[15] = 1;
     }
 
-    public function view(eye1: Float, eye2: Float, eye3: Float, target1: Float, target2: Float, target3: Float, up1: Float, up2: Float, up3: Float) {
-        var targetLength = Math.sqrt(Math.pow(eye1 - target1, 2) + Math.pow(eye2 - target2, 2) + Math.pow(eye3 - target3, 2));
-        var z1 = (eye1 - target1) / targetLength;
-        var z2 = (eye2 - target2) / targetLength;
-        var z3 = (eye3 - target3) / targetLength;
+    public function view(eye: Array<Float>, target: Array<Float>, down: Array<Float>) {
+        inline function vectorNormalize(vector: Array<Float>): Array<Float> {
+            var len = Math.sqrt(vector[0]*vector[0] + vector[1]*vector[1] + vector[2]*vector[2]);
+            return [vector[0] / len, vector[1] / len, vector[2] / len];
+        }
 
-        // cross up and z to get x
-        var x1 = up2*z3 - up3*z2;
-        var x2 = up3*z1 - up1*z3;
-        var x3 = up1*z2 - up2*z1;
+        inline function vectorCrossProduct(vec1: Array<Float>, vec2: Array<Float>): Array<Float> {
+            var a1 = vec1[0];
+            var a2 = vec1[1];
+            var a3 = vec1[2];
+            var b1 = vec2[0];
+            var b2 = vec2[1];
+            var b3 = vec2[2];
 
-        // cross x and z to get y
-        var y1 = x2*z3 - x3*z2;
-        var y2 = x3*z1 - x1*z3;
-        var y3 = x1*z2 - x2*z1;
+            return [a2*b3 - a3*b2, a3*b1 - a1*b3, a1*b2 - a2*b1];
+        }
 
-        /*
-        value[0] = x1
-        value[1] = x2
-        value[2] = x3
-        value[3] = -1*(x1*eye1 + x2*eye2 + x3*eye3)
+        inline function vectorDotProduct(vec1: Array<Float>, vec2: Array<Float>): Float {
+            var a1 = vec1[0];
+            var a2 = vec1[1];
+            var a3 = vec1[2];
+            var b1 = vec2[0];
+            var b2 = vec2[1];
+            var b3 = vec2[2];
 
-        value[4] = y1
-        value[5] = y2
-        value[6] = y3
-        value[7] = -1*(y1*eye1 + y2*eye2 + y3*eye3)
+            return a1*b1 + a2*b2 + a3*b3;
+        }
 
-        value[8] = z1
-        value[9] = z2
-        value[10] = z3
-        value[11] = -1*(z1*eye1 + z2*eye2 + z3*eye3)
+        var z = vectorNormalize([eye[0] - target[0], eye[1] - target[1], eye[2] - target[2]]);
+        var x = vectorNormalize(vectorCrossProduct(down, z));
+        var y = vectorCrossProduct(z, x);
 
-        value[12] = 0
-        value[13] = 0
-        value[14] = 0
-        value[15] = 1
-        */
+        value[0] = x[0];
+        value[1] = y[0];
+        value[2] = z[0];
+        value[3] = 0;
 
-        // transposed!
+        value[4] = x[1];
+        value[5] = y[1];
+        value[6] = z[1];
+        value[7] = 0;
 
-        value[0] = x1;
-        value[4] = y1;
-        value[8] = z1;
-        value[12] = 0;
+        value[8] = x[2];
+        value[9] = y[2];
+        value[10] = z[2];
+        value[11] = 0;
 
-        value[1] = x2;
-        value[5] = y2;
-        value[9] = z2;
-        value[13] = 0;
-
-        value[2] = x3;
-        value[6] = y3;
-        value[10] = z3;
-        value[14] = 0;
-
-        value[3] = -1*(x1*eye1 + x2*eye2 + x3*eye3);
-        value[7] = -1*(y1*eye1 + y2*eye2 + y3*eye3);
-        value[11] = -1*(z1*eye1 + z2*eye2 + z3*eye3);
+        value[12] = -1*vectorDotProduct(x, eye);
+        value[13] = -1*vectorDotProduct(y, eye);
+        value[14] = -1*vectorDotProduct(z, eye);
         value[15] = 1;
     }
 }
